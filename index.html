@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Recetas Saludables</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Mis Recetas Saludables</h1>
+                <button id="theme-toggle" aria-label="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Buscar recetas...">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="todos">Todos</button>
+                    <button class="filter-btn" data-filter="desayuno">Desayunos</button>
+                    <button class="filter-btn" data-filter="almuerzo">Almuerzos</button>
+                    <button class="filter-btn" data-filter="colacion">Colaciones</button>
+                    <button class="filter-btn" data-filter="cena">Cenas</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="recipes-grid" id="recipes-container">
+            <!-- Las tarjetas de recetas se cargarán dinámicamente con JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Mis Recetas Saludables - Creado con amor para una vida más sana</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
