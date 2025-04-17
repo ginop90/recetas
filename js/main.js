@@ -84,18 +84,21 @@ const typeLabels = {
 
 // Cargar recetas cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    // Configurar el toggle de tema siempre, independientemente de la página
+    setupThemeToggle();
+    
     // Verificar si estamos en la página de inicio
     if (document.getElementById('recipes-container')) {
         loadRecipes('todos');
         setupFilters();
         setupSearch();
         setupFavorites();
-        setupThemeToggle();
     }
     
     // Verificar si estamos en una página de receta
     if (document.querySelector('.recipe-container')) {
         setupRecipePage();
+        setupFavoriteButtons(); // Configurar botones de favoritos en la página de receta
     }
 });
 
@@ -221,6 +224,7 @@ function setupSearch() {
 }
 
 // Configurar favoritos
+// Configurar favoritos
 function setupFavorites() {
     // Verificar si existe un botón de filtro de favoritos
     const favoritesButton = document.querySelector('.filter-btn[data-filter="favoritos"]');
@@ -233,6 +237,19 @@ function setupFavorites() {
             
             // Filtrar recetas favoritas
             const favoritedRecipes = recipes.filter(recipe => favorites.includes(recipe.id));
+            
+            // Si no hay favoritos, mostrar un mensaje (OLD COLOR ROJO #ff4757)
+            if (favoritedRecipes.length === 0) {
+                const noFavoritesMessage = document.createElement('div');
+                noFavoritesMessage.className = 'no-favorites-message';
+                noFavoritesMessage.innerHTML = `
+                    <i class="fas fa-heart-broken" style="font-size: 2rem; margin-bottom: 15px; color: #ffc107;"></i>
+                    <h3>No tienes recetas favoritas</h3>
+                    <p>Marca tus recetas favoritas haciendo clic en el corazón para verlas aquí</p>
+                `;
+                container.appendChild(noFavoritesMessage);
+                return;
+            }
             
             // Crear tarjetas de recetas favoritas
             favoritedRecipes.forEach(recipe => {
@@ -267,8 +284,19 @@ function setupFavorites() {
 // Configurar botones de favoritos
 function setupFavoriteButtons() {
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    const favorites = getFavorites();
     
     favoriteButtons.forEach(button => {
+        const recipeId = button.dataset.id;
+        
+        // Establecer el estado inicial del botón según los favoritos guardados
+        if (favorites.includes(recipeId)) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+        
+        // Configurar evento de clic
         button.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -303,38 +331,53 @@ function getFavorites() {
 
 // Configurar la página de receta individual
 function setupRecipePage() {
-    // Aquí se podría poner lógica específica para la página de receta
-    // Por ejemplo, calcular totales de nutrientes, etc.
+    // Obtener el ID de la receta actual desde la URL
+    const path = window.location.pathname;
+    const recipeId = path.split('/').pop().replace('.html', '');
+    
+    // Aquí podrías agregar lógica específica para la página de receta
+    // Por ejemplo, actualizar el estado del botón de favoritos
+    const favoriteBtn = document.querySelector('.favorite-btn');
+    if (favoriteBtn) {
+        const favorites = getFavorites();
+        if (favorites.includes(recipeId)) {
+            favoriteBtn.classList.add('active');
+        }
+    }
 }
 
 // Configurar el toggle de tema claro/oscuro
 function setupThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
-    const icon = themeToggle.querySelector('i');
     
-    // Verificar tema guardado
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    
-    // Aplicar tema inicial
-    if (isDarkMode) {
-        document.body.classList.add('dark-theme');
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
-    }
-    
-    // Configurar evento de clic
-    themeToggle.addEventListener('click', function() {
-        document.body.classList.toggle('dark-theme');
+    // Verificar que el botón de toggle existe
+    if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
         
-        // Actualizar icono
-        if (document.body.classList.contains('dark-theme')) {
+        // Verificar tema guardado
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        // Aplicar tema inicial
+        if (isDarkMode) {
+            document.body.classList.add('dark-theme');
             icon.classList.remove('fa-moon');
             icon.classList.add('fa-sun');
-            localStorage.setItem('darkMode', 'true');
-        } else {
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-            localStorage.setItem('darkMode', 'false');
         }
-    });
+        
+        // Configurar evento de clic
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            
+            // Actualizar icono
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+    }
 }
